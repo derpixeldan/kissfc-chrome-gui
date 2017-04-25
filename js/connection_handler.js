@@ -51,6 +51,11 @@ $(document).ready(function() {
                         $('#navigation').show();
                         $("li[data-name='esc_flasher']").show();
 
+                        // remove active modal and blur class as in .kissModal('destroy').
+                        $('#modal').remove();
+                        $('#content').removeClass('blur');
+                        $('#navigation').removeClass('blur');
+
                         if (GUI.activeContent != 'firmware') {
                             $('#content').empty();
                             // load welcome content

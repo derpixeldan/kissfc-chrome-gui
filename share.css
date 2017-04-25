@@ -133,13 +133,13 @@
     display: none;
     position: fixed;
     z-index: 9999;
-    top: 0;
+    top: 4rem;
     right: 0;
     bottom: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.2);
 }
 
 .modal-container {
@@ -152,10 +152,11 @@
 
 .modal-content {
     width: 32rem;
-    background: var(--still-dark);
+    background: var(--near-white);
+    color: var(--dark);
     border-radius: 4px;
     margin-bottom: 12rem;
-    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.4);
+    box-shadow: 0 2px 64px 6px rgba(0,0,0,0.6);
 }
 
 .graph {
@@ -164,6 +165,10 @@
     border-radius: 2px;
     max-width: 100%;
     box-shadow: 0 1px 2px 0 rgba(0,0,0,0.4);
+}
+
+.blur {
+    filter: blur(8px);
 }
 
 /* Using Tachyons classes http://tachyons.io/ or https://github.com/tachyons-css/tachyons/ */
@@ -259,6 +264,10 @@
 .ttl { text-transform: lowercase; }
 .ttu { text-transform: uppercase; }
 .ttn { text-transform: none; }
+
+.word-normal { word-break: normal; }
+.word-wrap { word-break: break-all; }
+.word-nowrap { word-break: keep-all; }
 
 :root {
       --spacing-none: 0;
