@@ -12,11 +12,10 @@
             return this.each(function() {
                 var self = $(this);
                 var content = $(self).html();
+                var id = self.attr('id');
                 var body = $('body');
-                $(self).html("");
-                $(self).hide();
                 var c = "";
-                c+='<div id="modal" class="content-locker">';
+                c+='<div id="modal" class="content-locker ' + id + '">';
                 c+='<div class="modal-container">';
                 c+='<div class="modal-content pa5">';
                 c+= content;

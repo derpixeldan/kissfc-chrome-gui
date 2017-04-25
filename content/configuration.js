@@ -451,7 +451,7 @@ CONTENT.configuration.initialize = function(callback) {
             $("#downgrade_gui").kissModal({});
         } else if (!data['isActive']) {
             $("#activation").kissModal({});
-            $("#activation-button").click(function() {
+            $("body").on("click", ".activation-button", function() {
                 $(this).addClass('disabled');
                 $.ajax({
                     url: 'http://ultraesc.de/KISSFC/getActivation/index.php?SN=' + MCUid + '&VER=' + data['ver'],
@@ -469,10 +469,10 @@ CONTENT.configuration.initialize = function(callback) {
                         });
                     },
                     error: function() {
-                        $('#activation-button').removeClass('disabled');
+                        $('.activation-button').removeClass('disabled');
                         console.log('getting activation code failed');
                         data['actKey'] = 0;
-                        $(".button", "#activation").text("ACTIVATION FAILED, TRY AGAIN");
+                        $(".activation-button").text("Activation failed, try again");
                     }
                 });
             });
