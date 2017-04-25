@@ -37,7 +37,7 @@ CONTENT.esc_flasher.initialize = function(callback) {
             Write(startApp);
             console.log('done.');
             $("#status").html("SUCCESS!");
-            $(".esc-flasher-complete").show();
+            $("#esc-flasher-complete").kissModal({});
             serialDevice.disconnect();
             return;
         } else {
@@ -81,16 +81,27 @@ CONTENT.esc_flasher.initialize = function(callback) {
     function htmlLoaded() {
         $("#escInfoDiv").hide();
         
-        $(".warning-button").on("click", function() {
+        $('body').on('click', '.modal-button', function() {
             kissProtocol.send(kissProtocol.GET_SETTINGS, [0x30], function() {
-                $(".esc-flasher-disclaimer").hide();
+                $("#esc-flasher-disclaimer").kissModal("destroy");
                 if (kissProtocol.data[kissProtocol.GET_SETTINGS]['ver'] > 103) {
                     kissProtocol.send(kissProtocol.ESC_INFO, [0x22], function() { self.pollEscInfo = true; pollEscInfo(); });
                 }
             });
         });
+
+        $('body').on('click', '.modal-cancel', function() {
+            if ($('.esc-flasher-disclaimer').is(':visible')) {
+                $("#esc-flasher-disclaimer").kissModal("destroy");
+                CONTENT.configuration.initialize();
+            }
+        });
+
+        $(document).keyup(function(e) {
+            if (e.keyCode === 27) $('.modal-cancel').click();
+        });
     
-        $(".esc-flasher-disclaimer").show();
+        $("#esc-flasher-disclaimer").kissModal({});
         
          $("#select_file").on("click", function() {
               if (!$(this).hasClass("disabled")) {
