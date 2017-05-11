@@ -1,50 +1,42 @@
-<div class="esc_flasher">
-    <div class="wrapper-half">
-		<div class="groupTitle">KISS ESC Flasher</div>
-		<p>
-			<a id="select_file" class="config_button" href="#">SELECT FIRMWARE</a>
-		</p>
-
-		<p id="file_info"></p>
-
-		<p>
-			<a id="flash" class="config_button hidden" href="#">FLASH FIRMWARE</a>
-		</p>
-		
-		<p id="status"></p>
-		
-		<p id="esc_info">
-			
-		</p>
-		
-	</div>
-	<div class="wrapper-half">
-		<div class="wrapper-full">    	
-        	<img style="float:right;" src="./images/welcome1.png" />
-		</div>
-    	<div id="escInfoDiv" class="wrapper-full">
-    		<div class="groupTitle">KISS ESC Info</div>
-    		<ul id="escInfo">
-    		</ul>
-    	</div>
+<div class="row">
+    <div class="col-8 col-l-4 pr5-l mb3 mb5-l">
+        <div class="section-header">Flash ESC's</div>
+        <div class="section-content">
+            <div class="row">
+                <div class="col-6 pr3">
+                    <input type="text" id="file_info" class="w-100" value="..." disabled >
+                </div>
+                <div class="col-2">
+                    <a id="select_file" class="f2 button w-100 word-nowrap" href="#">Select Firmware</a>
+                </div>
+            </div>
+            <p>
+                <a id="flash" class="button dn" href="#">FLASH FIRMWARE</a>
+            </p>
+            <p id="status"></p>
+            <p id="esc_info"></p>
+        </div>
+    </div>
+    <div class="col-8 col-l-4">
+        <div class="section-header">ESC info</div>
+        <div class="section-content">
+            <ul id="escInfo">
+            </ul>
+        </div>
     </div>
 </div>
 
 <div id="esc-flasher-complete" class="content-locker">
-    <div class="modal-container">
-        <div class="modal-content pa5">
-            <h1 class="f6 mb2 lh-title">ESC flashing complete</h1>
-            <p class="f2 mb5 lh-copy">
-                For safety reasons, communication with KISS FC has been terminated. Please unplug your battery, and reconnect your KISS FC.
-            </p>
-        </div>
-    </div>
+    <h1 class="f6 mb2 lh-title">ESC flashing complete</h1>
+    <p class="f2 mb5 lh-copy">
+        For safety reasons, communication with the KISS FC has been terminated. Please unplug your battery, and reconnect.
+    </p>
 </div>
 
 <div id="esc-flasher-disclaimer" class="content-locker">
     <h1 class="f6 mb2 lh-title">Warning</h1>
     <p class="f2 mb5 lh-copy">
-        Only works with KISS 24A ESC, bootloader 1.02 or later. Before using the ESC Flasher you have to remove the propellers! Flashing ESC's is potentially dangerous and you use it at your own risk. You will have to power cycle your KISSFC after flashing.
+        Only works with KISS 24A ESC, bootloader 1.02 or later. Before using the ESC Flasher you have to remove the propellers then power your ESC's! Please note, Flashing ESC's is potentially dangerous and you use it at your own risk. You will have to power cycle your KISS FC after flashing.
     </p>
     <div class="col end">
         <a class="modal-cancel button highlight mr2" href="#">Cancel</a>

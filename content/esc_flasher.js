@@ -52,20 +52,17 @@ CONTENT.esc_flasher.initialize = function(callback) {
 
     function pollEscInfo() {
         if (self.pollEscInfo) {
-            $("#escInfoDiv").show();
-        
             kissProtocol.send(kissProtocol.GET_INFO, [0x21], function() {
                 var info = kissProtocol.data[kissProtocol.GET_INFO];
                 $("#escInfo").empty();
                 if (info['escInfoCount'] === undefined || info['escInfoCount']==0) {
                     self.pollEscInfo = false;
                 } else {
-                    $("#escInfoDiv").show();
                     for (var i=0; i<info.escInfoCount; i++) {
                         if (info.escInfo[i] !== undefined) { 
-                            var li = $("<li/>").html("#"+(i+1)+": Firmware Version: " + info.escInfo[i].type + " " + info.escInfo[i].version + " | S/N: " + info.escInfo[i].SN);
+                            var li = $("<li class='f2 mb2'/>").html("#"+(i+1)+": Firmware Version: " + info.escInfo[i].type + " " + info.escInfo[i].version + " | S/N: " + info.escInfo[i].SN);
                         } else {
-                            var li = $("<li/>").html("#"+(i+1)+": --");
+                            var li = $("<li class='f2 mb2'/>").html("#"+(i+1)+": --");
                         }
                         $("#escInfo").append(li);
                     }
@@ -131,11 +128,11 @@ CONTENT.esc_flasher.initialize = function(callback) {
                                      
                                   if (self.pages!==undefined) {
                                       console.log("HEX OS OK " + self.pages.length + " blocks loaded");
-                                    $("#file_info").html("Loaded " +  self.pages.length + " blocks from " + path);
+                                    $("#file_info").val("Loaded " +  self.pages.length + " blocks from " + path);
                                     $("#flash").show();
                                   } else {
                                       console.log("Corrupted esc firmware file");
-                                    $("#file_info").html("Selected esc firmware file is not suitable for flashing");
+                                    $("#file_info").val("Selected esc firmware file is not suitable for flashing");
                                     $("#flash").hide();
                                   }
                               }

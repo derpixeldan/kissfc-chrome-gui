@@ -236,6 +236,7 @@ input[type="number"] {
     box-shadow: 0 1px 2px 0 rgba(0,0,0,0.2);
 }
 
+input[type="text"]:disabled,
 input[type="number"]:disabled {
     color: var(--much-gray);
     background: var(--dark);
@@ -249,8 +250,7 @@ input[type="number"]:disabled::-webkit-outer-spin-button {
 
 input[type="text"] {
     padding: 0.5rem;
-    min-width: 2rem;
-    width: 5rem;
+    min-width: 6rem;
 }
 
 input:placeholder {
