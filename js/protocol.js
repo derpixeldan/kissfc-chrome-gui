@@ -17,6 +17,7 @@ var kissProtocol = {
     GET_SETTINGS:   0x30,
     SET_SETTINGS:   0x10,
     MOTOR_TEST:     0x11,
+    SET_ESC_SETTINGS:   0x12,
 
     block:                  false,
     ready:                  false,
@@ -171,7 +172,7 @@ kissProtocol.proceedRequest = function() {
         }
         this.ReceiveTimeout =  window.setTimeout(function(){
             kissProtocol.receiving = false; 
-        }, 100); 
+        }, 500); 
     }
     if (this.RequestInterval == 0) {
         this.RequestInterval = window.setInterval(function(){ kissProtocol.proceedRequest(); }, 10);
@@ -310,8 +311,10 @@ kissProtocol.processPacket = function (code, obj) {
                 obj.NFE = [];
                 obj.NFCF = [];
                 obj.NFCO = [];
+                obj.ver = 0;
+                obj.reverseMotors = 0;
             }
-
+            
             obj.G_P[0] = data.getUint16(0, 0) / 1000;
             obj.G_P[1] = data.getUint16(2, 0) / 1000;
             obj.G_P[2] = data.getUint16(4, 0) / 1000;
@@ -340,6 +343,10 @@ kissProtocol.processPacket = function (code, obj) {
             obj.RPY_Curve[1] = data.getInt16(42, 0) / 1000;
             obj.RPY_Curve[2] = data.getInt16(44, 0) / 1000;
             obj.ver = data.getUint8(92);
+            
+            
+            try {
+            
             obj.RXType = data.getInt16(46, 0);
             obj.PPMchanOrder = data.getInt16(48, 0);
             obj.CopterType = data.getInt16(50, 0);
@@ -465,8 +472,17 @@ kissProtocol.processPacket = function (code, obj) {
                 
                 obj.motorBuzzer = data.getUint8(163, 0);
             }
+            if (obj.ver > 108){
+                obj.loopTimeDivider = data.getUint8(164, 0);
+                obj.yawLpF = data.getUint8(165, 0);
+                obj.DLpF = data.getUint8(166, 0);
+                obj.reverseMotors = data.getUint8(167, 0);
+            }
             
             kissProtocol.upgradeTo104(obj);
+            } catch (Exception) {
+                console.log("Exception while reading packet");
+            }
             break;
             
         case this.SET_SETTINGS:
@@ -488,7 +504,7 @@ kissProtocol.processPacket = function (code, obj) {
                 // if we have data left
                    obj.escInfoCount =  data.getUint8(p++);
                    for (var i = 0; i < obj.escInfoCount; i++) {
-                       var info = { SN: '', version: 0, type: 'UNKNOWN ESC' };
+                       var info = { SN: '', version: 0, type: 'UNKNOWN ESC', Settings: [0,0,0,0]};
                        var SN = [];
                        var CPUID = '';
                        for (var j = 0; j < 12; j++) SN[j] = data.getUint8(p++);
@@ -515,7 +531,12 @@ kissProtocol.processPacket = function (code, obj) {
                            info.type='KISS 16A';
                        } else if (type == 3) {
                            info.type='KISS 24A';
+                       } else if (type == 5) {
+                           info.type='KISS 24 Ultralite';
                        }
+		       if(data.byteLength/6 > 15){ // check if we got the new protocol
+				for(var r=0; r < 4; r++) info.Settings[r] = data.getUint8(p++);
+		       }
                        if (!found) info = undefined;
                        obj.escInfo[i] = info;
                    }
@@ -696,6 +717,13 @@ kissProtocol.preparePacket = function (code, obj) {
                 
                 blen=161;
             }
+	     if (obj.ver > 108) {
+			data.setUint8(153, obj.loopTimeDivider);
+			data.setUint8(154, obj.yawLpF);
+		    data.setUint8(155, obj.DLpF);
+		    data.setUint8(156, obj.reverseMotors);
+			blen=165;
+	     }
             break;
             
           case this.MOTOR_TEST:
@@ -708,6 +736,16 @@ kissProtocol.preparePacket = function (code, obj) {
                    data.setUint8(6, obj.motorTest[5], 0);
                    blen=7;
           break; 
+          
+          case this.SET_ESC_SETTINGS:
+              data.setUint8(0, obj.escSettings[0], 0);
+              data.setUint8(1, obj.escSettings[1], 0);
+              data.setUint8(2, obj.escSettings[2], 0);
+              data.setUint8(3, obj.escSettings[3], 0);
+              data.setUint8(4, obj.escSettings[4], 0);
+              data.setUint8(5, obj.escSettings[5], 0);
+              blen=6;
+     break; 
           
           case this.ESC_INFO:
               

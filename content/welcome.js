@@ -6,7 +6,7 @@ CONTENT.welcome.initialize = function(callback) {
     var self = this;
 
     GUI.switchContent('welcome', function() {
-        $('#content').load("./content/welcome.html", htmlLoaded);
+        GUI.load("./content/welcome.html", htmlLoaded);
     });
     
     function canDFU() {
@@ -28,9 +28,18 @@ CONTENT.welcome.initialize = function(callback) {
             }
         });
     }
-
+    
     function htmlLoaded() {
         if (canDFU()) checkDFU();
+        
+        $("#language").val($.i18n.locale);
+        
+        $("#language").on("change", function() {
+           var lang = $(this).val();
+           $.i18n.locale = lang;
+           setLanguage(lang);
+           changeLanguage();
+        });
     }
 };
 

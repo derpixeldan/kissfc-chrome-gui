@@ -1,17 +1,17 @@
 <div class="row">
     <div class="col-8 col-l-4 pr5-l mb3 mb5-l">
-        <div class="section-header">Flash ESC's</div>
+        <div class="section-header" data-i18n="title.esc-flasher">Flash KISS ESC's</div>
         <div class="section-content">
             <div class="row">
                 <div class="col-6 pr3">
                     <input type="text" id="file_info" class="w-100" value="..." disabled >
                 </div>
                 <div class="col-2">
-                    <a id="select_file" class="f2 button w-100 word-nowrap" href="#">Select Firmware</a>
+                    <a id="select_file" class="f2 button w-100 word-nowrap" href="#" data-i18n="button.select-firmware">Select Firmware</a>
                 </div>
             </div>
             <p>
-                <a id="flash" class="button dn" href="#">FLASH FIRMWARE</a>
+                <a id="flash" class="button dn" href="#" data-i18n="button.flash-firmware">FLASH FIRMWARE</a>
             </p>
             <p id="status"></p>
             <p id="esc_info"></p>
@@ -23,23 +23,76 @@
             <ul id="escInfo">
             </ul>
         </div>
+
+        <!-- To be updated -->
+        <div id="escSettingsDiv" class="wrapper-full"  style="display:none">
+            <div class="config_buttons">
+                <a id="save" class="config_button" href="#"
+                    title="Save Settings to ESC" data-i18n="button.save">Save Settings</a>
+            </div>
+            <div class="clear-both"></div>
+            
+            <div class="groupTitle" data-i18n="title.esc-settings">KISS ESC Settings</div>
+                <table class="escSettings">
+                    <thead>
+                        <th data-i18n="column.esc-number"></th>
+                        <th data-i18n="column.esc-reverse"></th>
+                        <th data-i18n="column.esc-3dmode"></th>
+                    </thead>
+                    <tbody>
+                        <tr style="display:none">
+                            <td>1</td>
+                            <td><input class="unsafe direction" type="checkbox" /></td>
+                            <td><input class="unsafe 3d" type="checkbox" /></td>
+                        </tr>
+                        <tr style="display:none">
+                            <td>2</td>
+                            <td><input class="unsafe direction" type="checkbox" /></td>
+                            <td><input class="unsafe 3d" type="checkbox"/></td>
+                        </tr>
+                        <tr style="display:none">
+                            <td>3</td>
+                            <td><input class="unsafe direction" type="checkbox"/></td>
+                            <td><input class="unsafe 3d" type="checkbox" /></td>
+                        </tr>
+                        <tr style="display:none">
+                            <td>4</td>
+                            <td><input class="unsafe direction" type="checkbox"  /></td>
+                            <td><input class="unsafe 3d" type="checkbox" /></td>
+                        </tr>
+                        <tr style="display:none">
+                            <td>5</td>
+                            <td><input class="unsafe direction" type="checkbox"  /></td>
+                            <td><input class="unsafe 3d" type="checkbox" /></td>
+                        </tr>
+                        <tr style="display:none">
+                            <td>6</td>
+                            <td><input class="unsafe direction" type="checkbox" /></td>
+                            <td><input class="unsafe 3d" type="checkbox" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- /To be updated -->
+
     </div>
 </div>
 
 <div id="esc-flasher-complete" class="content-locker">
-    <h1 class="f6 mb2 lh-title">ESC flashing complete</h1>
-    <p class="f2 mb5 lh-copy">
+    <h1 class="f6 mb2 lh-title" data-i18n="title.esc-flasher-complete">ESC flashing complete</h1>
+    <p class="f2 mb5 lh-copy" data-i18n="[html]text.esc-flasher-complete">
         For safety reasons, communication with the KISS FC has been terminated. Please unplug your battery, and reconnect.
     </p>
 </div>
 
 <div id="esc-flasher-disclaimer" class="content-locker">
-    <h1 class="f6 mb2 lh-title">Warning</h1>
-    <p class="f2 mb5 lh-copy">
+    <h1 class="f6 mb2 lh-title" data-i18n="title.warning">Warning</h1>
+    <p class="f2 mb5 lh-copy" data-i18n="[html]text.esc-flasher-warning">
         Only works with KISS 24A ESC, bootloader 1.02 or later. Before using the ESC Flasher you have to remove the propellers then power your ESC's! Please note, Flashing ESC's is potentially dangerous and you use it at your own risk. You will have to power cycle your KISS FC after flashing.
     </p>
     <div class="col end">
         <a class="modal-cancel button highlight mr2" href="#">Cancel</a>
-        <a class="modal-button button" href="#">I know what I'm doing</a>
+        <a class="modal-button button" href="#" data-i18n="button.esc-flasher-accept">I know what I'm doing</a>
     </div>
 </div>

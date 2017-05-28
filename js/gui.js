@@ -157,3 +157,11 @@ GUI.switchContent = function(newContent, callback) {
         callback();
     }
 }
+
+GUI.load = function(url, callback) {
+    $('#content').load(url, function() {
+ 
+        callback();
+        $("*", "#content").i18n();
+    });
+}

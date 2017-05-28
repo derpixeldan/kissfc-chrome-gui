@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-8 col-l-3 pr5-l mb3 mb5-l">
-        <div class="section-header">Receiver</div>
+        <div class="section-header" data-i18n="title.receiver">Receiver</div>
         <div class="section-content">
             <table class="receiver-bars w-100">
             </table>
@@ -8,9 +8,9 @@
     </div>
     <div class="col-8 col-l-3 pr5-l mb3 mb5-l">
         <div id="motorTestTitle" class="section-header">
-            Motors
-            <a class="motor-test-button" href="#" style="font-size:11px;">TEST</a>
-            <input style="display:none" type="checkbox" class="motor-test-enabled"/>
+            <span data-i18n="title.motors">Motors</span>
+            <a class="motor-test-button" href="#" style="font-size:11px;" data-i18n="button.test">TEST</a>
+            <input class="dn" type="checkbox" class="motor-test-enabled"/>
         </div>
         <div class="section-content">
             <table class="motor-bars w-100">
@@ -18,53 +18,53 @@
         </div>
     </div>
     <div class="col-8 col-l-2 mb3 mb5-l">
-        <div class="section-header">Other</div>
+        <div class="section-header" data-i18n="title.other">Other</div>
         <div class="section-content">
             <table class="otherValues w-100">
                 <tr>
                     <td class="pb2">
-                        <label class="mr1">Mode:</label>
+                        <label class="mr1" data-i18n="column.mode">Mode:</label>
                     </td>
                     <td id="omode" class="pb2 f2 fw6 w-100">
                     </td>
                 </tr>
                 <tr>
                     <td class="pb2">
-                        <label class="mr1">Status:</label>
+                        <label class="mr1" data-i18n="column.status">Status:</label>
                     </td>
                     <td id="ostatus" class="pb2 f2 fw6 w-100">
                     </td>
                 </tr>
                 <tr>
                     <td class="pb2">
-                        <label class="mr1">AngleX:</label>
+                        <label class="mr1" data-i18n="column.angle-x">AngleX:</label>
                     </td>
                     <td id="oanglex" class="pb2 f2 fw6 w-100">
                     </td>
                 </tr>
                 <tr>
                     <td class="pb2">
-                        <label class="mr1">AngleY:</label>
+                        <label class="mr1" data-i18n="column.angle-y">AngleY:</label>
                     </td>
                     <td id="oangley" class="pb2 f2 fw6 w-100">
                     </td>
                 </tr>
                 <tr>
                     <td class="pb2">
-                        <label class="mr1">Idle:</label>
+                        <label class="mr1" data-i18n="column.idle">Idle:</label>
                     </td>
                     <td id="idle" class="pb2 f2 fw6 w-100">
                     </td>
                 </tr>
                 <tr>
                     <td class="pb2">
-                        <label class="mr1">Voltage:</label>
+                        <label class="mr1" data-i18n="column.voltage">Voltage:</label>
                     </td>
                     <td id="Vbat" class="pb2 f2 fw6 w-100"></td>
                 </tr>
                 <tr>
                     <td colspan="4">
-                        <a class="calibrateAccelerometer button" href="#">Calibrate Accelerometer</a>
+                        <a class="calibrateAccelerometer button" href="#" data-i18n="button.calibrate-accelerometer">Calibrate Accelerometer</a>
                     </td>
                 </tr>
             </table>
@@ -74,17 +74,12 @@
 
 <div class="row">
     <div class="col-8 mb2">
-        <div class="section-header">Telemetry</div>
+        <div class="section-header" data-i18n="title.telemetry">Telemetry</div>
         <div class="section-content">
             <div class="row">
                 <div class="col-8 mb4">
                     <select name="graphTitle">
-                        <option value="0">Gyro &amp; ACC Data:</option>
-                        <!--<option value="1">ESC Temperatures:</option>
-                        <option value="2">ESC Voltanges:</option>
-                        <option value="3">ESC Currents:</option>
-                        <option value="4">ESC used W/h</option>
-                        <option value="5">ESC E-RpM / 1000</option> -->
+                        <option value="0" data-i18n="telemetry.0">Gyro &amp; ACC Data:</option>
                     </select>
                 </div>
                 <div class="col-8">
@@ -93,27 +88,27 @@
                             <td>
                                 <table class="legend" cellpadding="0" cellspacing="0">
                                     <tr>
-                                        <td id="#graph1" class="pb4">Gyroscope X:</td>
+                                        <td id="#graph1" class="pb4" data-i18n="legend.1">Gyroscope X:</td>
                                         <td class="fw6 pb4"><span class="output w3 dib"></span></td>
                                     </tr>
                                     <tr>
-                                        <td id="#graph2" class="pb4">Gyroscope Y:</td>
+                                        <td id="#graph2" class="pb4" data-i18n="legend.2">Gyroscope Y:</td>
                                         <td class="fw6 pb4"><span class="output w3 dib"></span></td>
                                     </tr>
                                     <tr>
-                                        <td id="#graph3" class="pb4">Gyroscope Z:</td>
+                                        <td id="#graph3" class="pb4" data-i18n="legend.3">Gyroscope Z:</td>
                                         <td class="fw6 pb4"><span class="output w3 dib"></span></td>
                                     </tr>
                                     <tr>
-                                        <td id="#graph4" class="nowrap pb4 pr4">Accelerometer X:</td>
+                                        <td id="#graph4" class="nowrap pb4 pr4" data-i18n="legend.4">Accelerometer X:</td>
                                         <td class="fw6 pb4"><span class="output w3 dib"></span></td>
                                     </tr>
                                     <tr>
-                                        <td id="#graph5" class="nowrap pb4">Accelerometer Y:</td>
+                                        <td id="#graph5" class="nowrap pb4" data-i18n="legend.5">Accelerometer Y:</td>
                                         <td class="fw6 pb4"><span class="output w3 dib"></span></td>
                                     </tr>
                                     <tr>
-                                        <td id="#graph6" class="nowrap pb4">Accelerometer Z:</td>
+                                        <td id="#graph6" class="nowrap pb4" data-i18n="legend.6">Accelerometer Z:</td>
                                         <td class="fw6 pb4"><span class="output w3 dib"></span></td>
                                     </tr>
                                 </table>
@@ -125,7 +120,7 @@
                         <tr>
                             <td></td>
                             <td>
-                                <span class="mr1">GXmax:</span><span id="gxmax" class="fw6 mr2 w-">0</span>
+                                <span class="mr1">GXmax:</span><span id="gxmax" class="fw6 mr2">0</span>
                                 <span class="mr1">GXmin:</span><span id="gxmin" class="fw6 mr2">0</span>
                                 <span class="mr1">GYmax:</span><span id="gymax" class="fw6 mr2">0</span>
                                 <span class="mr1">GYmin:</span><span id="gymin" class="fw6 mr2">0</span>
@@ -143,12 +138,12 @@
 <div class="content-locker">
     <div class="modal-container">
         <div class="modal-content pa4">
-            <h1 class="f6 mb2 lh-title">Warning!</h1>
-            <p class="f2 mb4 lh-copy">
+            <h1 class="f6 mb2 lh-title" data-i18n="title.warning">Warning!</h1>
+            <p class="f2 mb4 lh-copy" data-i18n="[html]text.motor-test-warning">
                 Before using the motor test you have to remove the propellers! The motor test is potentially dangerous and you use it at your own risk. Connect a LiPo Battery and make sure the FC is disarmed, otherwise the motor test won't work.
             </p>
             <a class="modal-cancel button highlight mr2" href="#">Cancel</a>
-            <a class="modal-button button" href="#">I have read and understand the instructions above</a>
+            <a class="modal-button button" href="#" data-i18n="text.motor-test-button">I understand</a>
         </div>
     </div>
 </div>

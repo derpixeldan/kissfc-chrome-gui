@@ -7,10 +7,11 @@ CONTENT.advanced = {
 
 CONTENT.advanced.initialize = function(callback) {
     var self = this;
+    var settingsFilled = 0;
 
     GUI.switchContent('advanced', function() {
         kissProtocol.send(kissProtocol.GET_SETTINGS, [ 0x30 ], function() {
-            $('#content').load("./content/advanced.html", function() {
+            GUI.load("./content/advanced.html", function() {
                 htmlLoaded(kissProtocol.data[kissProtocol.GET_SETTINGS]);
             });
         });
@@ -18,29 +19,27 @@ CONTENT.advanced.initialize = function(callback) {
 
     function htmlLoaded(data) {
         validateBounds('#content input[type="text"]');
-        var settingsFilled = 0;
+     
+        $('input[name="mahAlarm"]').val(data['mahAlarm']);
 
-        if (data['ver'] > 102) {
-            $('select[name="loggerConfig"]').removeAttr("disabled");
+        $('input[name="DB0"]').val(+data['DB'][0]);
+        $('input[name="DB1"]').val(+data['DB'][1]);
+        $('input[name="DB2"]').val(+data['DB'][2]);
+           
+        if (data['motorBuzzer']) {
+            $('input[name="motorBuzzer"]').prop('checked', 1);
         }
-        
-        if (data['ver'] > 106) {
-            $('#vtx').show();
-            $('input[name="mahAlarm"]').val(data['mahAlarm']);
-            $('input[name="mahAlarm"]').removeAttr("disabled");
-            $('input[name="DB0"]').removeAttr("disabled");
-            $('input[name="DB1"]').removeAttr("disabled");
-            $('input[name="DB2"]').removeAttr("disabled");
-            $('input[name="DB0"]').val(+data['DB'][0]);
-            $('input[name="DB1"]').val(+data['DB'][1]);
-            $('input[name="DB2"]').val(+data['DB'][2]);
-            $('input[name="motorBuzzer"]').removeAttr("disabled");
-            if (data['motorBuzzer']) {
-                $('input[name="motorBuzzer"]').prop('checked', 1);
+        if (data['ver'] > 108) { // remove serial vtx from 109..
+            $("select[name='loggerConfig'] option[value='11']").remove();
+            if (data['loggerConfig']>10) {
+                data['loggerConfig']=0; // osd!
+            }
+            if (data['reverseMotors']=="1") {
+                $('input[name="reverseMotors"]').prop('checked', 1);
             }
         } else {
-            $("select[name='loggerConfig'] option[value='11']").remove();
-            $('#vtx').hide();
+            $("select[name='vtxType'] option[value='3']").remove(); // no unify on 108
+            $("#reverseMotors").hide();
         }
    
         if (data['loggerConfig'] > 0 && data['loggerConfig'] < 11)
@@ -55,25 +54,23 @@ CONTENT.advanced.initialize = function(callback) {
         $('input[name="vtxPowerHigh"]').val(+data['vtxPowerHigh']);
         
         $('select[name="loggerConfig"]').on('change', function() {
-            if (+$(this).val() < 11) {
-                if (+$(this).val()>0) {
+            var tmp = +$(this).val();
+            if (tmp < 11) {
+                if (tmp > 0) {
                     $("#loggerDebug").show();
                 } else {
                     $("#loggerDebug").hide();
                 }
-                if ($("select[name='vtxType']").val()=="2") {
-                    $("select[name='vtxType']").val("0").trigger("change");
-                }
+                if (data['ver'] == 108) {
+                    if ($("select[name='vtxType']").val()=="2") {
+                        $("select[name='vtxType']").val("0").trigger("change");
+                    }
+                }    
             } else {
                 $("#loggerDebug").hide();
-                if (data['ver'] > 106) {
-                   $("select[name='vtxType']").val("2");
-                } 
             }
             contentChange();
         });
-
-      
         
         $('input[name="CBO0"]').val(+data['CBO'][0]);
         $('input[name="CBO1"]').val(+data['CBO'][1]);
@@ -102,37 +99,61 @@ CONTENT.advanced.initialize = function(callback) {
             $('input[name="CBO2"]').removeAttr("disabled");
         }
 
-        /*
-         * if (cbo) { document.body.style.overflow = "scroll"; }
-         */
-
         for (var i = 0; i < 64; i++) {
             $("select[name='lapTimerTransponderId']").append("<option value='" + i + "'>" + ((i == 0) ? '--' : i) + "</option>");
         }
 
-        if (data['ver'] > 102) {
-            $("select[name='vtxChannel']").val(data['vtxChannel']);
-        }
+ 
+        $("select[name='vtxChannel']").val(data['vtxChannel']);
         
-        if (data['ver'] > 104) {
-            $('input[name="NFE0"]').removeAttr("disabled");
-            $('input[name="NFCF0"]').removeAttr("disabled");
-            $('input[name="NFCO0"]').removeAttr("disabled");
-            $('input[name="NFE1"]').removeAttr("disabled");
-            $('input[name="NFCF1"]').removeAttr("disabled");
-            $('input[name="NFCO1"]').removeAttr("disabled");
-            $('input[name="YCF"]').removeAttr("disabled");
+        $('input[name="NFE0"]').removeAttr("disabled");
+        $('input[name="NFCF0"]').removeAttr("disabled");
+        $('input[name="NFCO0"]').removeAttr("disabled");
+        $('input[name="NFE1"]').removeAttr("disabled");
+        $('input[name="NFCF1"]').removeAttr("disabled");
+        $('input[name="NFCO1"]').removeAttr("disabled");
+        $('input[name="YCF"]').removeAttr("disabled");
 
-            if (data['NFE'][0]==1)  $('input[name="NFE0"]').prop('checked', 1);
-            $('input[name="NFCF0"]').val(data['NFCF'][0]);
-            $('input[name="NFCO0"]').val(data['NFCO'][0]);
-            if (data['NFE'][1]==1) $('input[name="NFE1"]').prop('checked', 1);
-            $('input[name="NFCF1"]').val(data['NFCF'][1]);
-            $('input[name="NFCO1"]').val(data['NFCO'][1]);
+        if (data['NFE'][0]==1)  $('input[name="NFE0"]').prop('checked', 1);
+        $('input[name="NFCF0"]').val(data['NFCF'][0]);
+        $('input[name="NFCO0"]').val(data['NFCO'][0]);
+        if (data['NFE'][1]==1) $('input[name="NFE1"]').prop('checked', 1);
+        $('input[name="NFCF1"]').val(data['NFCF'][1]);
+        $('input[name="NFCO1"]').val(data['NFCO'][1]);
 
-            if (data['YawCfilter']) $('input[name="YCF"]').val(data['YawCfilter']);
+        if (data['YawCfilter']) $('input[name="YCF"]').val(data['YawCfilter']);
+        
+        if (data['ver'] > 108) {
+            kissProtocol.send(kissProtocol.GET_INFO, [0x21], function() {
+                var info = kissProtocol.data[kissProtocol.GET_INFO];
+                var FCinfo = info.firmvareVersion.split(/-/g);
+                if((info.firmvareVersion.indexOf("KISSFC") != -1 && FCinfo[0].length < 7) || (info.firmvareVersion.indexOf("KISSCC") != -1 && FCinfo[0].length < 7)){
+                    $("select[name='loopTimeDivider'] option[value='8']").remove();
+                }
+            });
+            
+            $('select[name="loopTimeDivider"]').val(data['loopTimeDivider']);
+            $('select[name="loopTimeDivider"]').on("change", function() {
+                contentChange();
+            }); 
+            $('select[name="loopTimeDivider"]').removeAttr("disabled");
+            $('select[name="yawlpf"]').removeAttr("disabled");
+            $('select[name="yawlpf"]').val(data['yawLpF']);
+            $('select[name="yawlpf"]').on("change", function() {
+                contentChange();
+            }); 
+            $('select[name="mainlpf"]').removeAttr("disabled");
+            $('select[name="mainlpf"]').val(data['LPF']);
+            $('select[name="mainlpf"]').on("change", function() {
+                contentChange();
+            });
+            $('select[name="Dlpf"]').removeAttr("disabled");
+            $('select[name="Dlpf"]').val(data['DLpF']);
+            $('select[name="Dlpf"]').on("change", function() {
+                contentChange();
+            });
         }
-
+    
         $('input[name^="lapTimer"]').on("change", function() {
             contentChange();
         });
@@ -191,10 +212,9 @@ CONTENT.advanced.initialize = function(callback) {
             contentChange();
         });
         
-        if (data['ver'] > 103) {
+   
 
             $('input[name="vbatAlarm"]').val(data['vbatAlarm']);
-            $('input[name="vbatAlarm"]').removeAttr("disabled");
 
             $('#colorPicker').minicolors({
                 format : 'rgb',
@@ -213,10 +233,10 @@ CONTENT.advanced.initialize = function(callback) {
                     contentChange();
                 },
                 hide : function() {
-                    console.log('Hide event triggered!');
+                   
                 },
                 show : function() {
-                    console.log('Show event triggered!');
+                    
                 }
             });
             var rgb = data['RGB'][0] + ',' + data['RGB'][1] + ',' + data['RGB'][2];
@@ -238,7 +258,7 @@ CONTENT.advanced.initialize = function(callback) {
             } else {
                 $(".vtx_opts").show();
             }
-        }
+        
 
         $('select[name="RGBSelector"]').on('change', function() {
             if (this.value !== '') {
@@ -258,14 +278,18 @@ CONTENT.advanced.initialize = function(callback) {
         $('select[name="vtxType"]').on('change', function() {
             if (this.value == "0") {
                $(".vtx_opts").hide();
-               if ($("#loggerConfig").val()=="11") {
-                   $("#loggerConfig").val("0").trigger("change");
+               if (data['ver']==108) {
+                   if ($("#loggerConfig").val()=="11") {
+                       $("#loggerConfig").val("0").trigger("change");
+                   }
                }
             } else {
-                if (this.value=="2") {
-                    $("#loggerConfig").val("11").trigger("change");
-                } else {
-                    $("#loggerConfig").val("0").trigger("change");
+                if (data['ver']==108) {
+                    if (this.value=="2") {
+                        $("#loggerConfig").val("11").trigger("change");
+                    } else {
+                        $("#loggerConfig").val("0").trigger("change");
+                    }
                 }
                 $(".vtx_opts").show();
             }
@@ -276,6 +300,8 @@ CONTENT.advanced.initialize = function(callback) {
         } else {
             $(".unsafe").prop('disabled', false).removeClass("unsafe_active");
         }
+        settingsFilled = 1;
+    
 
         function grabData() {
             data['BoardRotation'] = 0;
@@ -319,14 +345,25 @@ CONTENT.advanced.initialize = function(callback) {
             data['DB'][0] = parseInt($('input[name="DB0"]').val());
             data['DB'][1] = parseInt($('input[name="DB1"]').val());
             data['DB'][2] = parseInt($('input[name="DB2"]').val());
+	    
+            data['loopTimeDivider'] = parseInt($('select[name="loopTimeDivider"]').val());
+            data['yawLpF'] = parseInt($('select[name="yawlpf"]').val());
+            data['DLpF'] = parseInt($('select[name="Dlpf"]').val());
+            data['LPF'] = parseInt($('select[name="mainlpf"]').val());
             
             if ($('input[name="motorBuzzer"]').prop('checked') ? 1 : 0 == 1) {
                 data['motorBuzzer'] = 1;
             } else {
                 data['motorBuzzer'] = 0;
             }
+            
+            if ($('input[name="reverseMotors"]').prop('checked') ? 1 : 0 == 1) {
+                data['reverseMotors'] = 1;
+            } else {
+                data['reverseMotors'] = 0;
+            }
+       
         }
-        settingsFilled = 1;
 
         function contentChange() {
             if (settingsFilled) {
@@ -350,6 +387,7 @@ CONTENT.advanced.initialize = function(callback) {
 
             });
         }
+        
 
         $('#save').on('click', function() {
             grabData();
@@ -357,13 +395,12 @@ CONTENT.advanced.initialize = function(callback) {
             kissProtocol.send(kissProtocol.SET_SETTINGS, kissProtocol.preparePacket(kissProtocol.SET_SETTINGS, kissProtocol.data[kissProtocol.GET_SETTINGS]));
             if (!data['isActive']) {
                 kissProtocol.send(kissProtocol.GET_SETTINGS, [ 0x30 ], function() {
-                    $('#content').load("./content/advanced.html", function() {
+                    GUI.load("./content/advanced.html", function() {
                         htmlLoaded(kissProtocol.data[kissProtocol.GET_SETTINGS]);
                     });
                 });
             }
         });
-
     }
 };
 

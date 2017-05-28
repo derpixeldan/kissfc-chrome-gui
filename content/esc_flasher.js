@@ -12,7 +12,7 @@ CONTENT.esc_flasher.initialize = function(callback) {
     self.pollEscInfo = false;
 
     GUI.switchContent('esc_flasher', function() {
-         $('#content').load("./content/esc_flasher.html", htmlLoaded);
+         GUI.load("./content/esc_flasher.html", htmlLoaded);
     });
 
     function Write(data) {
@@ -36,18 +36,22 @@ CONTENT.esc_flasher.initialize = function(callback) {
             var startApp = [83, 83, 83];
             Write(startApp);
             console.log('done.');
-            $("#status").html("SUCCESS!");
+            $("#status").html($.i18n("text.esc-flasher-success"));
             $("#esc-flasher-complete").kissModal({});
             serialDevice.disconnect();
             return;
         } else {
             var percentage = 100-100*(actPage/self.pages.length);
-              $("#status").html("Progress: " + Math.floor(percentage + 0.5)+"%");
+            $("#status").html($.i18n("text.esc-flasher-progress", Math.floor(percentage + 0.5)));
             console.log('Sending block ' + (actPage + 1));
             Write(self.pages[actPage]);
             var timeout = (actPage == (self.pages.length-1) ? 2000 : 500);
             setTimeout(function() { WritePage(actPage-1); }, timeout);
         }
+    }
+    
+    function contentChange() {
+        $('#save').addClass("saveAct");
     }
 
     function pollEscInfo() {
@@ -60,28 +64,40 @@ CONTENT.esc_flasher.initialize = function(callback) {
                 } else {
                     for (var i=0; i<info.escInfoCount; i++) {
                         if (info.escInfo[i] !== undefined) { 
-                            var li = $("<li class='f2 mb2'/>").html("#"+(i+1)+": Firmware Version: " + info.escInfo[i].type + " " + info.escInfo[i].version + " | S/N: " + info.escInfo[i].SN);
+                            var li = $("<li class='f2 mb2'/>").html("#"+(i+1)+": "+$.i18n("text.firmware-version")+" " + info.escInfo[i].type + " " + info.escInfo[i].version + " "+$.i18n("text.sn")+" " + info.escInfo[i].SN);
                         } else {
                             var li = $("<li class='f2 mb2'/>").html("#"+(i+1)+": --");
                         }
                         $("#escInfo").append(li);
+                        if (kissProtocol.data[kissProtocol.GET_SETTINGS].ver>108) {
+                            $(".escSettings tbody tr:nth-child("+(i+1)+")").show();
+			    if (info.escInfo[i] !== undefined) {
+				if(info.escInfo[i].Settings[0] == 1) $(".direction").eq(i).prop("checked", true);
+				if(info.escInfo[i].Settings[1] == 1) $(".3d").eq(i).prop("checked", true);
+			    }
+                        }
                     }
                 }
             });
         } 
-        if (GUI.activeContent == 'esc_flasher') {
-            // TODO: May be give up after 2 * escCount seconds.
-            setTimeout(function() { pollEscInfo(); }, 2000);
-        }
+       
     }
 
     function htmlLoaded() {
-        $("#escInfoDiv").hide();
+
+        var data = kissProtocol.data[kissProtocol.GET_SETTINGS];
+        if (data.lipoConnected==1) {
+            if (data.ver>108) {
+                $("#escSettingsDiv").show();
+            }
+            $("#escInfoDiv").show();
+        }
         
         $('body').on('click', '.modal-button', function() {
             kissProtocol.send(kissProtocol.GET_SETTINGS, [0x30], function() {
                 $("#esc-flasher-disclaimer").kissModal("destroy");
-                if (kissProtocol.data[kissProtocol.GET_SETTINGS]['ver'] > 103) {
+                var data = kissProtocol.data[kissProtocol.GET_SETTINGS];
+                if (data.lipoConnected==1) {
                     kissProtocol.send(kissProtocol.ESC_INFO, [0x22], function() { self.pollEscInfo = true; pollEscInfo(); });
                 }
             });
@@ -100,7 +116,7 @@ CONTENT.esc_flasher.initialize = function(callback) {
     
         $("#esc-flasher-disclaimer").kissModal({});
         
-         $("#select_file").on("click", function() {
+        $("#select_file").on("click", function() {
               if (!$(this).hasClass("disabled")) {
                   $("#status").html("");
                     chrome.fileSystem.chooseEntry({type: 'openFile', accepts: [{extensions: ['hex']}]}, function (fileEntry) {
@@ -127,12 +143,12 @@ CONTENT.esc_flasher.initialize = function(callback) {
                                   self.pages = parseBootloaderHexFile(intel_hex);
                                      
                                   if (self.pages!==undefined) {
-                                      console.log("HEX OS OK " + self.pages.length + " blocks loaded");
-                                    $("#file_info").val("Loaded " +  self.pages.length + " blocks from " + path);
+                                    console.log("HEX OS OK " + self.pages.length + " blocks loaded");
+                                    $("#file_info").html($.i18n("text.esc-flasher-loaded", self.pages.length, path));
                                     $("#flash").show();
                                   } else {
                                       console.log("Corrupted esc firmware file");
-                                    $("#file_info").val("Selected esc firmware file is not suitable for flashing");
+                                    $("#file_info").html($.i18n("text.esc-flasher-invalid-firmware"));
                                     $("#flash").hide();
                                   }
                               }
@@ -169,6 +185,32 @@ CONTENT.esc_flasher.initialize = function(callback) {
               }, 3000);
             }
         });
+        
+        $("input[type=checkbox]").on("change", function() {
+            contentChange();
+        })
+        
+        if (GUI.activeContent == 'esc_flasher') {
+            // TODO: May be give up after 2 * escCount seconds.
+            if (data.lipoConnected==1) { setTimeout(function() { pollEscInfo(); }, 2000) }
+        }
+        
+        $("#save").on("click", function() {
+            var escSettings = [0x10, 0x20, 0x30, 0x40, 0x50, 0x60]; // Make CS complex
+            $(".direction").each(function(motor, elm) {
+                escSettings[motor] += $(elm).is(':checked') ? 1 : 0;
+            });
+            $(".3d").each(function(motor, elm) {
+                escSettings[motor] += $(elm).is(':checked') ? 2 : 0;
+            });
+            var tmp = {
+               'buffer' : new ArrayBuffer(6),
+               'escSettings' : escSettings
+            };
+            $('#save').removeClass("saveAct");
+            kissProtocol.send(kissProtocol.SET_ESC_SETTINGS, kissProtocol.preparePacket(kissProtocol.SET_ESC_SETTINGS, tmp)); 
+        });
+
     };
 }
 
