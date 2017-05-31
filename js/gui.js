@@ -8,7 +8,8 @@ var GUI = {
     activeContent : null,
     contentSwitchInProgress : false,
     intervalArray : [],
-    timeoutArray : []
+    timeoutArray : [],
+    state : "CONNECT"
 };
 
 GUI.intervalAdd = function(name, code, interval, first) {
@@ -164,4 +165,41 @@ GUI.load = function(url, callback) {
         callback();
         $("*", "#content").i18n();
     });
+}
+
+GUI.switchToConnect = function() {
+    // set button to connect
+    // unlock port select
+
+    $('a.connect').text($.i18n("menu.connect"));
+    $('a.connect').addClass('highlight');
+
+    // unlock port select
+    $('#port').prop('disabled', false);
+
+    // reset data
+    $('a.connect').data("clicks", false);
+
+    // $('#port').prop('disabled', false);
+    // $('a.connect').text($.i18n('menu.connect'));
+    // $('a.connect').removeClass('active');
+    // $('#navigation li:not([data-name="welcome"])').removeClass('unlocked');
+    // $('#navigation').show();
+    GUI.state = "CONNECT";
+}
+
+GUI.switchToConnecting = function() {
+    // set button to connecting
+    $('#port').prop('disabled', true);
+    $('a.connect').text($.i18n("menu.connecting"));
+    GUI.state = "CONNECTING";
+}
+
+GUI.switchToDisconnect = function() {
+    // set button to disconnect
+    $('a.connect').text($.i18n("menu.disconnect")).removeClass('highlight');
+
+    // $('a.connect').text($.i18n("menu.disconnect")).addClass('active');
+    // $('#navigation li').addClass('unlocked');
+    GUI.state = "DISCONNECT";
 }
